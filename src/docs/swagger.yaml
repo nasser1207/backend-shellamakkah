@@ -19,6 +19,45 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+  schemas:
+    ApiSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Success
+        data:
+          type: object
+          nullable: true
+
+    ApiError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Something went wrong
+        errors:
+          type: object
+          nullable: true
+
+    HealthResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiSuccess"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                uptime:
+                  type: number
+                  example: 1234.56
+
 tags:
   - name: Health
     description: Health check APIs
@@ -39,14 +78,11 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  message:
-                    type: string
-                    example: OK
-                  uptime:
-                    type: number
-                    example: 1234.56
+                $ref: "#/components/schemas/HealthResponse"
+
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
