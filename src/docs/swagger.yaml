@@ -1,4 +1,5 @@
 openapi: 3.0.0
+
 info:
   title: Shella Makkah Backend API
   description: API documentation for backend services
@@ -7,6 +8,16 @@ info:
 servers:
   - url: http://localhost:5000
     description: Local server
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
 tags:
   - name: Health
@@ -20,6 +31,8 @@ paths:
       tags:
         - Health
       summary: Health check
+      description: Public endpoint to verify server health
+      security: []
       responses:
         200:
           description: Server is healthy
@@ -30,7 +43,10 @@ paths:
                 properties:
                   success:
                     type: boolean
+                    example: true
                   message:
                     type: string
+                    example: OK
                   uptime:
                     type: number
+                    example: 1234.56
