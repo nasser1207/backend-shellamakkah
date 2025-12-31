@@ -4,12 +4,15 @@ import morgan from "morgan";
 
 import healthRoutes from "./routes/health.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { swaggerSetup } from "./docs/swagger.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
+
+swaggerSetup(app);
 
 app.use("/api/health", healthRoutes);
 
