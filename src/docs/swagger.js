@@ -6,8 +6,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const swaggerDocument = YAML.load(path.join(__dirname, "./swagger.yaml"));
+const swaggerDocument = YAML.load(path.join(__dirname, "./swagger.v1.yaml"));
 
 export const swaggerSetup = (app) => {
-  app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use("/api/docs/v1", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 };

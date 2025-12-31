@@ -14,7 +14,7 @@ app.use(morgan("dev"));
 
 swaggerSetup(app);
 
-app.use("/api/health", healthRoutes);
+app.use("/api/v1/health", healthRoutes);
 
 app.use(errorHandler);
 
