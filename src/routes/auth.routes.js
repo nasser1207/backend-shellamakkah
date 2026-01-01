@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verifySupabaseJwt } from "../middlewares/verifySupabaseJwt.js";
+import { verifySupabaseJwt } from "../middlewares/verify-supabase-jwt.middleware";
 
 const router = Router();
 
