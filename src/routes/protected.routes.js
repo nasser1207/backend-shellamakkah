@@ -3,15 +3,11 @@ import { verifySupabaseJwt } from "../middlewares/verify-supabase-jwt.middleware
 
 const router = Router();
 
-router.get("/me", verifySupabaseJwt, (req, res) => {
+router.get("/secure-data", verifySupabaseJwt, (req, res) => {
   res.json({
     success: true,
-    user: {
-      id: req.user.sub,
-      email: req.user.email,
-      provider: req.user.provider,
-      role: req.user.role,
-    },
+    message: "You are authenticated",
+    userId: req.user.sub,
   });
 });
 
