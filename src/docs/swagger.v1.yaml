@@ -175,30 +175,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ApiError"
 
-  /auth/google:
-    get:
-      tags:
-        - Auth
-      summary: Google OAuth login (via Supabase)
-      description: >
-        Redirects user to Google OAuth using Supabase Auth.
-        Backend only handles redirect and callback.
-      responses:
-        302:
-          description: Redirect to Google OAuth
-
-  /auth/callback:
-    get:
-      tags:
-        - Auth
-      summary: OAuth callback handler
-      description: >
-        Serves OAuth callback HTML which forwards tokens
-        back to frontend (Flutter Web / Web).
-      responses:
-        200:
-          description: OAuth callback page served
-
   /auth/me:
     get:
       tags:
