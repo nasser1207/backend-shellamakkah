@@ -56,6 +56,44 @@ components:
                   type: number
                   example: 1234.56
 
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - phone
+        - agreeToTerms
+      properties:
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: StrongPassword123
+        name:
+          type: string
+          example: John Doe
+        phone:
+          type: string
+          example: "+966501234567"
+        agreeToTerms:
+          type: boolean
+          example: true
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: StrongPassword123
+
 tags:
   - name: Health
     description: Health check APIs
@@ -80,6 +118,63 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
 
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Email & password signup
+      description: >
+        Creates a new user using Supabase Auth.
+        Requires agreement to terms and conditions.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        201:
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        400:
+          description: Validation or signup error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Email & password login
+      description: >
+        Authenticates user via Supabase and returns JWT access token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        401:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
   /auth/google:
     get:
       tags:
@@ -87,22 +182,22 @@ paths:
       summary: Google OAuth login (via Supabase)
       description: >
         Redirects user to Google OAuth using Supabase Auth.
-        This endpoint is handled entirely by Supabase, not the backend.
+        Backend only handles redirect and callback.
       responses:
         302:
           description: Redirect to Google OAuth
 
-  /auth/apple:
+  /auth/callback:
     get:
       tags:
         - Auth
-      summary: Apple OAuth login (via Supabase)
+      summary: OAuth callback handler
       description: >
-        Redirects user to Apple Sign-In using Supabase Auth.
-        This endpoint is handled entirely by Supabase, not the backend.
+        Serves OAuth callback HTML which forwards tokens
+        back to frontend (Flutter Web / Web).
       responses:
-        302:
-          description: Redirect to Apple OAuth
+        200:
+          description: OAuth callback page served
 
   /auth/me:
     get:
