@@ -1,0 +1,216 @@
+openapi: 3.0.0
+
+info:
+  title: Shella Makkah Backend API
+  description: API documentation for backend services (v1)
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local server (v1)
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: Success
+        data:
+          nullable: true
+
+    ApiError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: Unauthorized
+        errors:
+          nullable: true
+
+    HealthResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiSuccess"
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                uptime:
+                  type: number
+                  example: 1234.56
+
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+        - phone
+        - agreeToTerms
+      properties:
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: StrongPassword123
+        name:
+          type: string
+          example: John Doe
+        phone:
+          type: string
+          example: "+966501234567"
+        agreeToTerms:
+          type: boolean
+          example: true
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: StrongPassword123
+
+tags:
+  - name: Health
+    description: Health check APIs
+  - name: Auth
+    description: Authentication APIs
+  - name: Protected
+    description: JWT protected APIs
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Public endpoint to verify server health
+      security: []
+      responses:
+        200:
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: Email & password signup
+      description: >
+        Creates a new user using Supabase Auth.
+        Requires agreement to terms and conditions.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        201:
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        400:
+          description: Validation or signup error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Email & password login
+      description: >
+        Authenticates user via Supabase and returns JWT access token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        401:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /auth/me:
+    get:
+      tags:
+        - Auth
+      summary: Get current authenticated user
+      description: Returns the user decoded from Supabase JWT
+      responses:
+        200:
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+  /protected/secure-data:
+    get:
+      tags:
+        - Protected
+      summary: Test protected route
+      description: Requires valid Supabase Bearer token
+      responses:
+        200:
+          description: Access granted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiSuccess"
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"

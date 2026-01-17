@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Signing you in...</title>
+  </head>
+  <body>
+    <script>
+      const hash = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hash.get("access_token");
+
+      if (!accessToken) {
+        document.body.innerText = "Login failed";
+        throw new Error("No access token");
+      }
+
+      fetch("http://localhost:5000/api/v1/auth/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Logged in user:", data);
+          document.body.innerText = "Login successful";
+        })
+        .catch(() => {
+          document.body.innerText = "Auth verification failed";
+        });
+    </script>
+  </body>
+</html>
